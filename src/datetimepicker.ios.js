@@ -50,6 +50,7 @@ export default function Picker({
   fakeRef,
   onResponderTerminationRequest = ON_TERM,
   onStartShouldSetResponder = ON_START,
+  onUnmount = ON_START,
 }: IOSNativeProps) {
   const [heightStyle, setHeightStyle] = useState(undefined);
   const _picker: NativeRef = React.useRef();
@@ -103,6 +104,10 @@ export default function Picker({
 
   const dates: DatePickerOptions = {value, maximumDate, minimumDate};
   toMilliseconds(dates, 'value', 'minimumDate', 'maximumDate');
+  
+  useEffect(() => {
+    return () => {onUnmount()}
+  }, [])
 
   return (
     <RNDateTimePicker

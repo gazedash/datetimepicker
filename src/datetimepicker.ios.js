@@ -120,7 +120,7 @@ export default function Picker({
       textColor={textColor}
       onStartShouldSetResponder={() => onStartShouldSetResponder()}
       onResponderTerminationRequest={() => onResponderTerminationRequest()}
-      displayIOS={display_}
+      displayIOS={_display}
       {...otherProps}
     />
   );

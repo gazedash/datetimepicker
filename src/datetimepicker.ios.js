@@ -83,6 +83,9 @@ export default function Picker({
     },
     [_display, mode],
   );
+    useEffect(() => {
+    return () => {onUnmount()}
+  }, [])
 
   const _onChange = (event: Event) => {
     const timestamp = event.nativeEvent.timestamp;
@@ -104,11 +107,7 @@ export default function Picker({
 
   const dates: DatePickerOptions = {value, maximumDate, minimumDate};
   toMilliseconds(dates, 'value', 'minimumDate', 'maximumDate');
-  
-  useEffect(() => {
-    return () => {onUnmount()}
-  }, [])
-
+ 
   return (
     <RNDateTimePicker
       testID={testID}

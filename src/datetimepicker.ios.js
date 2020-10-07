@@ -1,14 +1,3 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * This is a controlled component version of RNDateTimePicker
- *
- * @format
- * @flow strict-local
- */
 import RNDateTimePicker from './picker';
 import {toMilliseconds} from './utils';
 import {IOS_DISPLAY, MODE_DATE} from './constants';
@@ -41,6 +30,9 @@ const getDisplaySafe = (display: IOSDisplay) => {
   return display;
 };
 
+const ON_START = () => true;
+const ON_TERM = () => false;
+
 export default function Picker({
   value,
   locale,
@@ -53,11 +45,17 @@ export default function Picker({
   timeZoneOffsetInMinutes,
   textColor,
   onChange,
-  ...otherProps
+  display,
+  otherProps,
+  fakeRef,
+  onResponderTerminationRequest = ON_TERM,
+  onStartShouldSetResponder = ON_START,
 }: IOSNativeProps) {
   const [heightStyle, setHeightStyle] = useState(undefined);
   const _picker: NativeRef = React.useRef();
-  const display = getDisplaySafe(otherProps.display);
+  const _display = getDisplaySafe(display);
+
+  fakeRef(_picker);
 
   useEffect(
     function ensureNativeIsInSyncWithJS() {
@@ -75,14 +73,14 @@ export default function Picker({
 
   useEffect(
     function ensureCorrectHeight() {
-      const height = getPickerHeightStyle(display, mode);
+      const height = getPickerHeightStyle(_display, mode);
       if (height instanceof Promise) {
         height.then((measuredStyle) => setHeightStyle(measuredStyle));
       } else {
         setHeightStyle(height);
       }
     },
-    [display, mode],
+    [_display, mode],
   );
 
   const _onChange = (event: Event) => {
@@ -120,9 +118,10 @@ export default function Picker({
       timeZoneOffsetInMinutes={timeZoneOffsetInMinutes}
       onChange={_onChange}
       textColor={textColor}
-      onStartShouldSetResponder={() => true}
-      onResponderTerminationRequest={() => false}
-      displayIOS={display}
+      onStartShouldSetResponder={() => onStartShouldSetResponder()}
+      onResponderTerminationRequest={() => onResponderTerminationRequest()}
+      displayIOS={display_}
+      {...otherProps}
     />
   );
 }
